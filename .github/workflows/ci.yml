@@ -1,0 +1,29 @@
+name: Basic test for h3agwas
+on: [push, pull_request]
+
+jobs:
+  # Test with maximal number of processes being run
+  test_assoc:
+    env:
+      NXF_VER: ${{ matrix.nxf_ver }}
+      NXF_ANSI_LOG: false
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        nxf_ver: ['19.10.0', '']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Nextflow
+        run: |
+          wget -qO- get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+      - name: Pull docker image
+        run: |
+          docker pull quay.io/h3abionet_org/py3plink
+          docker pull quay.io/h3abionet_org/py3plink
+          docker pull quay.io/h3abionet_org/h3agwas-texlive
+          docker pull quay.io/h3abionet_org/py2fastlmm
+          docker pull quay.io/h3abionet_org/py3metagwas
+      - name: Run pipeline with test data for association test
+        run: |
+          nextflow run ${GITHUB_WORKSPACE} -profile test
